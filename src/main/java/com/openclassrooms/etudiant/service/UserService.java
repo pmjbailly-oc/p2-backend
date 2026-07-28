@@ -37,7 +37,7 @@ public class UserService {
         Assert.notNull(login, "Login must not be null");
         Assert.notNull(password, "Password must not be null");
         Optional<User> user = userRepository.findByLogin(login);
-        if (user.isPresent() && passwordEncoder.matches(password, password)) {
+        if (user.isPresent() && passwordEncoder.matches(password, user.get().getPassword())) {
             UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
                     .username(login).build();
             return jwtService.generateToken(userDetails);
