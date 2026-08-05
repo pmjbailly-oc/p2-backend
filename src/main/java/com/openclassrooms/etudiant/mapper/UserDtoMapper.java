@@ -14,4 +14,5 @@ public interface UserDtoMapper {
     @Mapping(target = "updated_at", ignore = true)
     @Mapping(target = "authorities", ignore = true)
     User toEntity(RegisterDTO registerDTO);
+    
 }
