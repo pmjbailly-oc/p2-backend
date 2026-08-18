@@ -9,7 +9,6 @@ import com.openclassrooms.etudiant.repository.StudentRepository;
 import com.openclassrooms.etudiant.repository.UserRepository;
 import com.openclassrooms.etudiant.service.UserService;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -30,10 +29,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * Tests d'intégration du StudentController, de la requête HTTP jusqu'à la base MySQL
- * (container Docker). La classe est désactivée car le daemon Docker local ne répond pas
- * (named pipe Status 400) : la config Testcontainers est néanmoins la même que UserControllerTest.
+ * (container Docker via Testcontainers).
  */
-@Disabled("Docker local indisponible (named pipe Status 400) - à activer une fois Docker fonctionnel")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @Testcontainers
