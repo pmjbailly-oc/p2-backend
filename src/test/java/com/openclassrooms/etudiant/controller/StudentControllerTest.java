@@ -42,7 +42,7 @@ public class StudentControllerTest {
     private static final String EMAIL = "marie.durand@example.com";
 
     @Container
-    static MySQLContainer mySQLContainer = new MySQLContainer("mysql:latest");
+    static MySQLContainer mySQLContainer = new MySQLContainer("mysql:8.4");
 
     @Autowired
     private UserService userService;
