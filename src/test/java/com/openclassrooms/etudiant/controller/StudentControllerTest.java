@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -54,6 +55,8 @@ public class StudentControllerTest {
     private ObjectMapper objectMapper;
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @DynamicPropertySource
     static void configureTestProperties(DynamicPropertyRegistry registry) {
@@ -67,6 +70,8 @@ public class StudentControllerTest {
     public void afterEach() {
         studentRepository.deleteAll();
         userRepository.deleteAll();
+        jdbcTemplate.execute("ALTER TABLE student AUTO_INCREMENT = 1");
+        jdbcTemplate.execute("ALTER TABLE user AUTO_INCREMENT = 1");
     }
 
     /**
