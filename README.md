@@ -106,26 +106,73 @@ La capture d'écran ci-dessous résume les étapes précédentes :
 ![2-docker-desktop-bdd](pictures/2-docker-desktop-bdd.png)
 
 
+## APIs exposées
+
+Toutes les routes `/api/**` sont protégées par authentification **JWT**, sauf `POST /api/register` et `POST /api/login`.
+
+| Méthode | Route                | Description                                              |
+|---------|----------------------|----------------------------------------------------------|
+| POST    | `/api/register`      | Création d'un utilisateur (agent de la bibliothèque)     |
+| POST    | `/api/login`         | Authentification, renvoie un token JWT                   |
+| GET     | `/api/me`            | Informations de l'utilisateur connecté (token requis)    |
+| GET     | `/api/students`      | Liste des étudiants                                      |
+| GET     | `/api/students/{id}` | Détail d'un étudiant                                     |
+| POST    | `/api/students`      | Création d'un étudiant                                   |
+| PUT     | `/api/students/{id}` | Modification d'un étudiant                               |
+| DELETE  | `/api/students/{id}` | Suppression d'un étudiant                                |
+
+Les requêtes sur les routes protégées doivent porter l'en-tête :
+
+```
+Authorization: Bearer <token>
+```
+
+Une collection Bruno de test est disponible dans le dossier `API - Backend` du dépôt : elle couvre l'authentification, le CRUD étudiants et les cas d'erreur (token absent, email invalide ou déjà utilisé, ressource introuvable).
+
 ## Exécution des tests
-Pour exécuter les tests Junit, il faut :
-- avoir démarré Docker-Desktop sur votre poste de travail local. Cette étape est nécessaire car les tests d'intégration auront besoin de Docker pour créer des bases de données temporaires de test.
+
+Pour exécuter les tests JUnit, il faut :
+- avoir démarré Docker-Desktop sur votre poste de travail local. Cette étape est nécessaire car les tests d'intégration utilisent **Testcontainers** pour créer des bases de données MySQL temporaires de test.
 - dans une console, se placer à la racine du projet et exécuter la commande Maven suivante :
 
 ```
-mvn clean test
+mvn test
 ```
+
+Pour exécuter tous les tests **et** vérifier le seuil de couverture JaCoCo :
+
+```
+mvn verify
+```
+
+### Détails des tests
+
+- **39 tests** au total, tous verts : tests unitaires (services, mappers, JwtService) et tests d'intégration (`StudentControllerTest`, `UserControllerTest`).
+- Les tests d'intégration démarrent un container MySQL **8.4** via Testcontainers (l'image `mysql:latest` est incompatible avec la configuration injectée par défaut).
+- Testcontainers est en version **1.21.4**, requise pour être compatible avec Docker Engine 29 / Docker Desktop récent.
+- Chaque test d'intégration repart d'une base propre : le `@AfterEach` vide les tables et réinitialise l'`AUTO_INCREMENT`.
+
+### Couverture JaCoCo
+
+La commande `mvn verify` génère le rapport dans `target/site/jacoco/` et applique un seuil minimal de **80 % de lignes couvertes** sur les packages `service` et `mapper` :
+
+- `service` : **98,63 %**
+- `mapper` : **88,89 %**
 
 ## Fonctionnalités portées
 
     - API de création d'un utilisateur (agent de la bibliothèque)
-    - API d'authentification d'un utilisateur (à faire)
-    - APIs CRUD des étudiants de la bibliothèque (à faire)
+    - API d'authentification avec génération et validation d'un token JWT
+    - API d'information sur l'utilisateur connecté (/api/me)
+    - APIs CRUD complètes des étudiants de la bibliothèque
+    - Sécurisation des routes par filtre JWT (Spring Security)
+    - Validation Bean Validation (@Valid, @Email) et gestion centralisée des erreurs
 
 
 ## Écrans ou blocs concernés
-    - Ecran xxx
-    - Ecran xxx
-    - Ecran xxx
+
+    - Authentification (login / register du frontend)
+    - Liste, détail, création et édition des étudiants
 
 
 
