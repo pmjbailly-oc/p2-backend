@@ -1,0 +1,25 @@
+meta {
+  name: students delete
+  type: http
+  seq: 9
+}
+
+delete {
+  url: http://localhost:8080/api/students/{{studentId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+script:post-response {
+  test("response status is 204", () => {
+    expect(res.status).to.equal(204);
+  });
+}
+
+settings {
+  encodeUrl: true
+}

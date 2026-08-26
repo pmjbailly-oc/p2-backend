@@ -1,0 +1,37 @@
+meta {
+  name: students create invalid email
+  type: http
+  seq: 12
+}
+
+post {
+  url: http://localhost:8080/api/students
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "firstName": "Marie",
+    "lastName": "Durand",
+    "email": "not-an-email"
+  }
+}
+
+script:post-response {
+  const body = res.getBody();
+  test("response status is 400", () => {
+    expect(res.status).to.equal(400);
+  });
+  test("response follows the ErrorDetails format", () => {
+    expect(body).to.have.property("message");
+  });
+}
+
+settings {
+  encodeUrl: true
+}

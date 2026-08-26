@@ -1,0 +1,37 @@
+meta {
+  name: students create duplicate email
+  type: http
+  seq: 13
+}
+
+post {
+  url: http://localhost:8080/api/students
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "firstName": "Marie",
+    "lastName": "Durand",
+    "email": "marie.durand@example.com"
+  }
+}
+
+script:post-response {
+  const body = res.getBody();
+  test("response status is 400", () => {
+    expect(res.status).to.equal(400);
+  });
+  test("message mentions the duplicate email", () => {
+    expect(body.message).to.contain("already exists");
+  });
+}
+
+settings {
+  encodeUrl: true
+}

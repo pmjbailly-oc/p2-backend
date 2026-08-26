@@ -1,0 +1,29 @@
+meta {
+  name: me
+  type: http
+  seq: 3
+}
+
+get {
+  url: http://localhost:8080/api/me
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+script:post-response {
+  const body = res.getBody();
+  test("response status is 200", () => {
+    expect(res.status).to.equal(200);
+  });
+  test("response contains the authenticated user", () => {
+    expect(body.login).to.equal("pmj.bailly");
+  });
+}
+
+settings {
+  encodeUrl: true
+}

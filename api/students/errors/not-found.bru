@@ -1,0 +1,29 @@
+meta {
+  name: students get not found
+  type: http
+  seq: 14
+}
+
+get {
+  url: http://localhost:8080/api/students/999999
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+script:post-response {
+  const body = res.getBody();
+  test("response status is 400", () => {
+    expect(res.status).to.equal(400);
+  });
+  test("message mentions the missing id", () => {
+    expect(body.message).to.contain("not found");
+  });
+}
+
+settings {
+  encodeUrl: true
+}

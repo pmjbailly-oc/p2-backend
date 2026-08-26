@@ -1,0 +1,29 @@
+meta {
+  name: students list after delete
+  type: http
+  seq: 10
+}
+
+get {
+  url: http://localhost:8080/api/students
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+script:post-response {
+  test("response status is 200", () => {
+    expect(res.status).to.equal(200);
+  });
+  test("response array is empty", () => {
+    const body = res.getBody();
+    expect(body).to.be.an("array").that.is.empty;
+  });
+}
+
+settings {
+  encodeUrl: true
+}

@@ -1,0 +1,37 @@
+meta {
+  name: students update
+  type: http
+  seq: 8
+}
+
+put {
+  url: http://localhost:8080/api/students/{{studentId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "firstName": "Marie-Anne",
+    "lastName": "Durand",
+    "email": "marie.durand@example.com"
+  }
+}
+
+script:post-response {
+  const body = res.getBody();
+  test("response status is 200", () => {
+    expect(res.status).to.equal(200);
+  });
+  test("response returns the updated student", () => {
+    expect(body.firstName).to.equal("Marie-Anne");
+  });
+}
+
+settings {
+  encodeUrl: true
+}

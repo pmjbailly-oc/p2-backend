@@ -1,0 +1,30 @@
+meta {
+  name: students get by id
+  type: http
+  seq: 7
+}
+
+get {
+  url: http://localhost:8080/api/students/{{studentId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+script:post-response {
+  const body = res.getBody();
+  test("response status is 200", () => {
+    expect(res.status).to.equal(200);
+  });
+  test("response returns the requested student", () => {
+    expect(body.id).to.equal(Number(bru.getVar("studentId")));
+    expect(body.email).to.equal("marie.durand@example.com");
+  });
+}
+
+settings {
+  encodeUrl: true
+}

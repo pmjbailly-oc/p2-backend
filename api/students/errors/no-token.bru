@@ -1,0 +1,21 @@
+meta {
+  name: students list no token
+  type: http
+  seq: 11
+}
+
+get {
+  url: http://localhost:8080/api/students
+  body: none
+  auth: none
+}
+
+script:post-response {
+  test("response status is 401", () => {
+    expect(res.status).to.equal(401);
+  });
+}
+
+settings {
+  encodeUrl: true
+}

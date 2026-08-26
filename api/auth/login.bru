@@ -1,0 +1,33 @@
+meta {
+  name: login
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:8080/api/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "login": "pmj.bailly",
+    "password": "pmjbailly97643!"
+  }
+}
+
+script:post-response {
+  const body = res.getBody();
+  bru.setVar("token", body.token);
+  test("response status is 200", () => {
+    expect(res.status).to.equal(200);
+  });
+  test("response returns a JWT token", () => {
+    expect(body.token).to.be.a("string").that.is.not.empty;
+  });
+}
+
+settings {
+  encodeUrl: true
+}
