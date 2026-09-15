@@ -127,7 +127,45 @@ Les requêtes sur les routes protégées doivent porter l'en-tête :
 Authorization: Bearer <token>
 ```
 
-Une collection Bruno de test est disponible dans le dossier `API - Backend` du dépôt : elle couvre l'authentification, le CRUD étudiants et les cas d'erreur (token absent, email invalide ou déjà utilisé, ressource introuvable).
+Une collection Bruno de test est disponible dans le dossier `API` du dépôt : elle couvre l'authentification, le CRUD étudiants et les cas d'erreur (token absent, email invalide ou déjà utilisé, ressource introuvable).
+
+## Vue d'ensemble
+
+```mermaid
+flowchart LR
+  U[Browser\nhttp://localhost:4200] --> NG[Angular 19\nfront-end]
+  NG -- "/api/* proxifié\nproxy.conf.json" --> SB[Spring Boot 3.5\nback-end :8080]
+  SB --> DB[(MySQL 8.4\nDocker Compose)]
+  SB -- "Bearer JWT\nlocalStorage token" --- NG
+
+  subgraph Auth
+    G[AuthGuard] -->|non connecté → /login| NG
+    G -->|connecté → bloque /login /register → /students| NG
+    S[UserService\nisLoggedIn$ / setToken / logout] --- G
+  end
+
+  subgraph Tests
+    TC[Testcontainers 1.21.4\nMySQL 8.4 éphémère] --- SB
+    J[Jest 32 tests] --- NG
+    CY[Cypress 4 scn] --- NG
+  end
+```
+
+## Flux login (séquence)
+
+```mermaid
+sequenceDiagram
+  participant F as LoginComponent
+  participant S as UserService
+  participant B as POST /api/login
+  participant G as AuthGuard
+  F->>S: login({login, password})
+  S->>B: POST /api/login
+  B-->>S: {token}
+  S->>S: setToken(token)<br>localStorage + isLoggedIn$.next(true)
+  F->>G: navigate /students
+  G->>G: token présent ? oui → allow<br>/login tenté plus tard → redirect /students
+```
 
 ## Exécution des tests
 
